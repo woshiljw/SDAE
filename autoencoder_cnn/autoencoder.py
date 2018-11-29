@@ -121,16 +121,17 @@ init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
-    for i in range(2000):
+    for i in range(5000):
         x_,y = mnist.train.next_batch(64)
         if i % 10 == 0:
             print('In {} step,cost: {}'.format(i,sess.run(cost,feed_dict={x:x_})))
         sess.run(train_step,feed_dict={x:x_})
 
-        x_test = mnist.test.images.reshape(10,1000,784)
+    x_test = mnist.test.images.reshape(10, 1000, 784)
 
-        x_,result = sess.run([x_image,decode],feed_dict={x:x_test[0]})
-        plt.imshow(x_[0])
-        plt.show()
-        plt.imshow(result[0])
-        plt.show()
+    x_, result = sess.run([x_image, decode], feed_dict={x: x_test[0]})
+    print(x_[0].shape)
+    plt.imshow(np.reshape(x_[0],[28,28]))
+    plt.show()
+    plt.imshow(np.reshape(result[0],[28,28]))
+    plt.show()
