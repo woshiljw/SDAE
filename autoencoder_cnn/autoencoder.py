@@ -114,13 +114,13 @@ x_image,decode=mkModel(x)
 cost = tf.reduce_mean(tf.square(x_image-decode))
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cost)
 
-mnist = input_data.read_data_sets('~/Downloads/dataset')
+mnist = input_data.read_data_sets('../data',one_hot=True)
 init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
-    for i in range(20):
-        x_,y = mnist.train.get_batch(64)
+    for i in range(2000):
+        x_,y = mnist.train.next_batch(64)
         if i % 10 == 0:
             print('In {} step,cost: {}'.format(i,sess.run(cost,feed_dict={x:x_})))
         sess.run(train_step,feed_dict={x:x_})
