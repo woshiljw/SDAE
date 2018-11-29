@@ -1,6 +1,8 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
+import matplotlib.pyplot as plt
+
 
 def init_weights(shape):
     '''
@@ -124,3 +126,11 @@ with tf.Session() as sess:
         if i % 10 == 0:
             print('In {} step,cost: {}'.format(i,sess.run(cost,feed_dict={x:x_})))
         sess.run(train_step,feed_dict={x:x_})
+
+        x_test = mnist.test.images.reshape(10,1000,784)
+
+        x_,result = sess.run([x_image,decode],feed_dict={x:x_test[0]})
+        plt.imshow(x_[0])
+        plt.show()
+        plt.imshow(result[0])
+        plt.show()
