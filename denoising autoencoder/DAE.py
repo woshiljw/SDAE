@@ -62,13 +62,12 @@ def deconv_layer(x,shape,output_shape,name='deconv_layer'):
     b = init_bias([shape[2]])
     print('b:{}'.format(b.shape))
 
-    return tf.nn.relu(
-        tf.nn.conv2d_transpose(x,
+    return tf.nn.conv2d_transpose(x,
                                W,
                                output_shape,
                                strides=[1,1,1,1],
                                padding="SAME",name=name)+b
-    )
+
 
 
 def full_layer(input,size):
@@ -103,12 +102,12 @@ def mkModel(x):
 
     unpool1 = unpooling(tf.reshape(decode,[-1,7,7,8]),[2,2,8,8],tf.shape(conv2),name='unpool1')
     print("unpool:{}".format(unpool1.shape))
-    deconv1 = deconv_layer(unpool1,filters["conv2/deconv2"],tf.shape(conv1_pool),name='deconv1')
+    deconv1 = tf.nn.relu(deconv_layer(unpool1,filters["conv2/deconv2"],tf.shape(conv1_pool),name='deconv1'))
     print("deconv1:{}".format(deconv1.shape))
 
     unpool2 = unpooling(deconv1,[2,2,16,16],tf.shape(conv1),name='unpool2')
     print("unpool2:{}".format(unpool2.shape))
-    decode = deconv_layer(unpool2,filters["conv1/deconv1"],tf.shape(x_image),name='decode2')
+    decode = tf.nn.sigmoid(deconv_layer(unpool2,filters["conv1/deconv1"],tf.shape(x_image),name='decode2'))
     print("decode2:{}".format(decode.shape))
 
     return x_image,decode
