@@ -52,10 +52,13 @@ def unpooling(x,W,output_shape,name='unpool_layer'):
                                   padding='SAME',
                                   name=name)
 
-def conv_layer(x,shape,name='conv_layer'):
+def conv_layer(x,shape,name='conv_layer',ifrelu = True):
     W = init_weights(shape)
     b = init_bias([shape[3]])
-    return tf.nn.relu(conv2d(x,W,name=name)+b)
+    if ifrelu:
+        return tf.nn.relu(conv2d(x,W,name=name)+b)
+    else:
+        return tf.nn.sigmoid(conv2d(x,W,name=name)+b)
 
 def deconv_layer(x,shape,output_shape,name='deconv_layer'):
     W = init_weights(shape)
@@ -106,8 +109,8 @@ def mkModel(x):
 
     unpool2 = unpooling(deconv1,[2,2,16,16],tf.shape(conv1),name='unpool2')
     print("unpool2:{}".format(unpool2.shape))
-    decode = deconv_layer(unpool2,filters["conv1/deconv1"],tf.shape(x_image),name='decode2')
-    print("decode2:{}".format(decode.shape))
+    deconv2 = deconv_layer(unpool2,filters["conv1/deconv1"],tf.shape(x_image),name='deconv2')
+    decode = conv_layer(deconv2,[1,1,1,1],name='decode',ifrelu=False)
 
     return x_image,decode
 
